@@ -1,0 +1,25 @@
+{
+  "name": "JSON整形・検証ツール｜インデント整形・圧縮・エラー箇所表示",
+  "short_name": "JSON整形",
+  "description": "JSONテキストの整形（インデント2/4選択）・圧縮（minify）・検証ができる無料ツールです。不正なJSONはエラー箇所と理由を表示し、キーのアルファベット順ソートにも対応します。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#0071e3",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

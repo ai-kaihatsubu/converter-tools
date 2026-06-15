@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>料理の分量換算ツール｜大さじ・小さじ・カップ⇔g/ml・人数換算｜ツール工房</title>
+<meta name="description" content="大さじ・小さじ・カップをml/gに変換し、調味料ごとの重さの違いにも対応した無料の分量換算ツールです。人数換算（2人分→4人分など）にも対応。レシピ作りや料理の調整に便利です。">
+<link rel="canonical" href="https://ai-kaihatsubu.github.io/019-recipe-converter/">
+
+<!-- OGP -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="料理の分量換算ツール｜ツール工房">
+<meta property="og:description" content="大さじ/小さじ/カップ⇔ml/gの換算と、人数に合わせた材料量の倍率計算ができる無料ツール。">
+<meta property="og:url" content="https://ai-kaihatsubu.github.io/019-recipe-converter/">
+<meta property="og:image" content="https://ai-kaihatsubu.github.io/019-recipe-converter/icons/icon-512.svg">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0071e3">
+<link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "料理の分量換算ツール",
+  "description": "大さじ・小さじ・カップとml/gの換算、人数に合わせた材料量の倍率計算ができる無料の自己完結型ツール。",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">本文へスキップ</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <h1 class="logo">料理の分量換算</h1>
+    <nav class="header-actions" aria-label="表示設定">
+      <button id="theme-toggle" type="button" aria-label="ダーク/ライトモード切替" aria-pressed="false">
+        <span aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<div class="ad-slot ad-slot--top" data-ad-position="top" aria-hidden="true">
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<main id="main" class="container">
+
+  <section class="tool-section" aria-labelledby="unit-heading">
+    <h2 id="unit-heading">大さじ/小さじ/カップ ⇔ ml/g 換算</h2>
+    <div id="tool-root">
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="amount-input">数値</label>
+          <input type="number" id="amount-input" inputmode="decimal" step="any" value="1" min="0">
+        </div>
+        <div class="form-row">
+          <label for="unit-select">単位</label>
+          <select id="unit-select">
+            <option value="tbsp">大さじ（15ml）</option>
+            <option value="tsp">小さじ（5ml）</option>
+            <option value="cup">カップ（200ml）</option>
+            <option value="ml">ml</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="ingredient-select">調味料・材料</label>
+          <select id="ingredient-select">
+            <!-- JSで動的に生成 -->
+          </select>
+        </div>
+      </div>
+
+      <div class="result-box" id="unit-result" aria-live="polite">
+        <!-- JSで結果を表示 -->
+      </div>
+
+      <details class="density-table-wrap">
+        <summary>調味料ごとの重さ換算表（1ml あたりのg）</summary>
+        <table class="density-table" id="density-table">
+          <thead>
+            <tr><th>調味料・材料</th><th>1ml あたり(g)</th><th>大さじ1(15ml)のg</th><th>小さじ1(5ml)のg</th></tr>
+          </thead>
+          <tbody><!-- JSで生成 --></tbody>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <section class="tool-section" aria-labelledby="serving-heading">
+    <h2 id="serving-heading">人数換算（材料の倍率計算）</h2>
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="base-servings">基準の人数分</label>
+        <input type="number" id="base-servings" inputmode="decimal" step="any" value="2" min="0.1">
+      </div>
+      <div class="form-row">
+        <label for="target-servings">作りたい人数分</label>
+        <input type="number" id="target-servings" inputmode="decimal" step="any" value="4" min="0.1">
+      </div>
+      <div class="form-row">
+        <label for="ingredient-amount">材料の量（数値のみ）</label>
+        <input type="number" id="ingredient-amount" inputmode="decimal" step="any" value="100" min="0">
+      </div>
+    </div>
+    <div class="result-box" id="serving-result" aria-live="polite">
+      <!-- JSで結果を表示 -->
+    </div>
+    <p class="note">例: 2人分のレシピで「しょうゆ 30g」を4人分に作りたい場合、倍率は2倍となり、結果は「60g」になります。</p>
+  </section>
+
+  <section class="tool-section" aria-labelledby="howto-heading">
+    <h2 id="howto-heading">使い方</h2>
+    <ol>
+      <li>「大さじ/小さじ/カップ ⇔ ml/g 換算」では、数値・単位・調味料を選ぶと、ml換算とg換算が表示されます。</li>
+      <li>「人数換算」では、基準の人数分・作りたい人数分・材料の量を入力すると、倍率計算後の量が表示されます。</li>
+      <li>調味料ごとの重さ換算表は、代表的な調味料（水・砂糖・塩・醤油・油・小麦粉など）の比重に基づいています。</li>
+    </ol>
+    <p class="disclaimer">
+      <strong>※本ツールの計算結果はあくまで目安です。</strong>
+      調味料のブランド・粒度・温度・計量方法によって実際の重さは変動します。
+      正確な分量が必要な場合は、計量器（はかり）でのご確認をおすすめします。
+    </p>
+    <h2>よくある質問（FAQ）</h2>
+    <h3>Q. 大さじ・小さじの容量は何mlですか？</h3>
+    <p>A. 一般的に大さじ1=15ml、小さじ1=5ml、カップ1=200ml として計算しています（日本の計量カップ・スプーンの標準的なサイズ）。</p>
+    <h3>Q. 調味料によって重さが違うのはなぜですか？</h3>
+    <p>A. 調味料は密度（比重）が異なるため、同じ「大さじ1（15ml）」でも、塩と油では重さ（g）が異なります。本ツールでは代表的な調味料の目安比重を用いて換算しています。</p>
+    <h3>Q. 入力した内容は外部に送信されますか？</h3>
+    <p>A. いいえ。すべての計算はお使いの端末（ブラウザ）内で行われ、外部サーバーへの送信は一切行いません。</p>
+  </section>
+
+  <aside class="affiliate-box" aria-labelledby="affiliate-heading">
+    <h2 id="affiliate-heading">おすすめ</h2>
+    <p class="pr-label">[PR]</p>
+    <ul class="affiliate-list" id="affiliate-list"></ul>
+  </aside>
+
+  <section class="pro-box" aria-labelledby="pro-heading">
+    <h2 id="pro-heading">Proプラン</h2>
+    <p>広告非表示・追加機能が使える買い切りプランです。</p>
+    <button id="pro-button" type="button" class="btn btn-primary">Proを購入（準備中）</button>
+  </section>
+
+</main>
+
+<div class="ad-slot ad-slot--bottom" data-ad-position="bottom" aria-hidden="true">
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <nav aria-label="フッターリンク">
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="terms.html">利用規約</a>
+      <a href="operator.html">運営者情報</a>
+    </nav>
+    <p class="copyright">&copy; 2026 ツール工房</p>
+  </div>
+</footer>
+
+<script src="monetization.js" defer></script>
+<script src="app.js" defer></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>

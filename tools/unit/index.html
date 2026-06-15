@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>単位変換ツール｜長さ・重さ・温度・面積などをまとめて変換｜ツール工房</title>
+<meta name="description" content="長さ・重さ・温度・面積・体積・速度・データ容量・時間をブラウザ内で瞬時に変換。値と単位を選ぶだけで全単位の換算結果を一覧表示。無料・登録不要。">
+<link rel="canonical" href="https://ai-kaihatsubu.github.io/unit-converter/">
+
+<!-- OGP -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="単位変換ツール｜長さ・重さ・温度・面積などをまとめて変換｜ツール工房">
+<meta property="og:description" content="長さ・重さ・温度・面積・体積・速度・データ容量・時間をブラウザ内で瞬時に変換。値と単位を選ぶだけで全単位の換算結果を一覧表示。">
+<meta property="og:url" content="https://ai-kaihatsubu.github.io/unit-converter/">
+<meta property="og:image" content="https://ai-kaihatsubu.github.io/unit-converter/icons/icon-512.svg">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2563eb">
+<link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "単位変換ツール",
+  "description": "長さ・重さ・温度・面積・体積・速度・データ容量・時間をブラウザ内だけで変換するツールです。値と元の単位を入力すると、同じカテゴリ内の全単位への換算結果を一覧表示します。",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- TODO: AdSense（社長がキー登録後に有効化）
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+</head>
+<body>
+
+<a class="skip-link" href="#main">本文へスキップ</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <h1 class="logo">単位変換ツール</h1>
+    <nav class="header-actions" aria-label="表示設定">
+      <button id="theme-toggle" type="button" aria-label="ダーク/ライトモード切替" aria-pressed="false">
+        <span aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- TODO: AdSense 広告枠（コンテンツ上） -->
+<div class="ad-slot ad-slot--top" data-ad-position="top" aria-hidden="true">
+  <!-- <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<main id="main" class="container">
+
+  <section class="tool-section" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">単位を変換</h2>
+    <p class="lead">
+      値と単位を選ぶと、同じカテゴリ内のすべての単位への換算結果が一覧表示されます。
+      計算はすべてこの端末（ブラウザ）内で行われ、外部に送信されません。
+    </p>
+
+    <div id="tool-root">
+
+      <!-- カテゴリタブ -->
+      <div class="category-tabs" role="tablist" aria-label="変換カテゴリ" id="category-tabs">
+        <button type="button" class="category-tab is-active" role="tab" aria-selected="true" data-category="length" id="tab-length">長さ</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="weight" id="tab-weight">重さ</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="temperature" id="tab-temperature">温度</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="area" id="tab-area">面積</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="volume" id="tab-volume">体積</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="speed" id="tab-speed">速度</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="data" id="tab-data">データ容量</button>
+        <button type="button" class="category-tab" role="tab" aria-selected="false" data-category="time" id="tab-time">時間</button>
+      </div>
+
+      <!-- 入力 -->
+      <div class="settings-panel">
+        <div class="setting-row setting-row--grid setting-row--input">
+          <div>
+            <label for="input-value">変換する値</label>
+            <input type="number" id="input-value" inputmode="decimal" value="1" step="any">
+          </div>
+          <div>
+            <label for="input-unit">元の単位</label>
+            <select id="input-unit"></select>
+          </div>
+        </div>
+        <p class="setting-help" id="category-note"></p>
+      </div>
+
+      <p id="status-text" class="status-text" role="status" aria-live="polite"></p>
+
+      <!-- 結果一覧 -->
+      <ul id="result-list" class="result-list unit-result-list" aria-label="換算結果一覧"></ul>
+
+      <template id="result-item-template">
+        <li class="result-item unit-result-item">
+          <div class="unit-result-item__info">
+            <p class="unit-result-item__name"></p>
+            <p class="unit-result-item__value"></p>
+          </div>
+          <button type="button" class="btn btn-secondary unit-result-item__copy">コピー</button>
+        </li>
+      </template>
+
+    </div>
+  </section>
+
+  <!-- 使い方 -->
+  <section class="tool-section" aria-labelledby="howto-heading">
+    <h2 id="howto-heading">使い方</h2>
+    <ol>
+      <li>上部のタブから変換したいカテゴリ（長さ・重さ・温度など）を選びます。</li>
+      <li>「変換する値」に数値を入力し、「元の単位」を選択します。</li>
+      <li>同じカテゴリ内のすべての単位への変換結果が一覧に表示されます。よく使う単位は上に表示されます。</li>
+      <li>各結果の「コピー」ボタンで、数値をクリップボードにコピーできます。</li>
+    </ol>
+    <p>
+      入力した値や単位の選択はこの端末（ブラウザ）内でのみ処理され、外部のサーバーへ送信されることはありません。
+    </p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="tool-section" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+
+    <h3>温度の変換も正確ですか？</h3>
+    <p>
+      はい。温度（℃・℉・K）は単純な係数ではなく、それぞれの単位に応じた変換式で計算しています。
+      例えば100℃は212℉、373.15Kとなります。
+    </p>
+
+    <h3>非常に大きい・小さい数値を入力するとどうなりますか？</h3>
+    <p>
+      内部では倍精度浮動小数点数で計算し、結果は読みやすいように適切な有効桁数で表示します。
+      非常に大きい・小さい値は指数表記（例: 1.23e+9）で表示される場合があります。
+    </p>
+  </section>
+
+  <!-- TODO: アフィリエイト枠 -->
+  <aside class="affiliate-box" aria-labelledby="affiliate-heading">
+    <h2 id="affiliate-heading">おすすめ</h2>
+    <p class="pr-label">[PR]</p>
+    <ul class="affiliate-list" id="affiliate-list">
+      <!-- monetization.js で動的に生成、またはここに直接記述 -->
+    </ul>
+  </aside>
+
+  <!-- Pro案内 -->
+  <section class="pro-box" aria-labelledby="pro-heading">
+    <h2 id="pro-heading">Proプラン</h2>
+    <p>
+      買い切り¥480で、広告非表示・よく使う単位のお気に入り固定・カテゴリの並び順カスタマイズなどが
+      利用できる予定です（準備中）。
+    </p>
+    <button id="pro-button" type="button" class="btn btn-primary">Proを購入（準備中）</button>
+    <p class="dev-only">
+      <button id="dev-pro-toggle" type="button" class="btn btn-secondary">Proフラグを切替（開発用）</button>
+    </p>
+  </section>
+
+</main>
+
+<!-- TODO: AdSense 広告枠（コンテンツ下） -->
+<div class="ad-slot ad-slot--bottom" data-ad-position="bottom" aria-hidden="true">
+  <!-- <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <nav aria-label="フッターリンク">
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="terms.html">利用規約</a>
+      <a href="operator.html">運営者情報</a>
+    </nav>
+    <p class="copyright">&copy; 2026 ツール工房</p>
+  </div>
+</footer>
+
+<script src="monetization.js" defer></script>
+<script src="app.js" defer></script>
+<script>
+  // PWA: Service Worker 登録（相対パスなのでサブパス公開でも scope が正しく効く）
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>

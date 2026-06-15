@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>カラーコード変換ツール｜HEX/RGB/HSL相互変換＆コントラスト比チェック｜ツール工房</title>
+<meta name="description" content="HEX・RGB・HSL・RGBA・HSLAを入力するだけで自動で相互変換。カラーピッカー対応、各表記をワンクリックでコピー。WCAGコントラスト比を計算しAA/AAA判定も可能な無料ツール。">
+<link rel="canonical" href="https://ai-kaihatsubu.github.io/color-converter/">
+
+<!-- OGP -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="カラーコード変換ツール｜HEX/RGB/HSL相互変換＆コントラスト比チェック">
+<meta property="og:description" content="HEX・RGB・HSLを自動で相互変換。カラーピッカー対応、コピー機能、WCAGコントラスト比チェックも備えた無料ツールです。">
+<meta property="og:url" content="https://ai-kaihatsubu.github.io/color-converter/">
+<meta property="og:image" content="https://ai-kaihatsubu.github.io/color-converter/icons/icon-512.svg">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2563eb">
+<link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "カラーコード変換ツール",
+  "description": "HEX・RGB・HSLを相互変換し、WCAGコントラスト比をチェックできる無料のオンラインツール。",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- TODO: AdSense（社長がキー登録後に有効化）
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+</head>
+<body>
+
+<a class="skip-link" href="#main">本文へスキップ</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <h1 class="logo">カラーコード変換ツール</h1>
+    <nav class="header-actions" aria-label="表示設定">
+      <button id="theme-toggle" type="button" aria-label="ダーク/ライトモード切替" aria-pressed="false">
+        <span aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- TODO: AdSense 広告枠（コンテンツ上） -->
+<div class="ad-slot ad-slot--top" data-ad-position="top" aria-hidden="true">
+  <!-- <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<main id="main" class="container">
+
+  <section class="tool-section" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">カラーコード変換</h2>
+    <div id="tool-root">
+
+      <div class="color-preview-wrap">
+        <div id="color-preview" class="color-preview" role="img" aria-label="選択中の色のプレビュー"></div>
+        <label class="picker-label" for="color-picker">
+          カラーピッカー
+          <input type="color" id="color-picker" value="#2563eb" aria-label="カラーピッカーで色を選択">
+        </label>
+        <button id="random-color-btn" type="button" class="btn btn-secondary">ランダム色生成</button>
+      </div>
+
+      <div class="conv-grid">
+        <div class="conv-field">
+          <label for="hex-input">HEX</label>
+          <div class="input-with-copy">
+            <input type="text" id="hex-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="#2563eb" aria-describedby="hex-error">
+            <button type="button" class="copy-btn" data-copy-target="hex-input" aria-label="HEXをコピー">コピー</button>
+          </div>
+          <p class="field-error" id="hex-error" role="alert"></p>
+        </div>
+
+        <div class="conv-field">
+          <label for="rgb-input">RGB</label>
+          <div class="input-with-copy">
+            <input type="text" id="rgb-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="rgb(37, 99, 235)" aria-describedby="rgb-error">
+            <button type="button" class="copy-btn" data-copy-target="rgb-input" aria-label="RGBをコピー">コピー</button>
+          </div>
+          <p class="field-error" id="rgb-error" role="alert"></p>
+        </div>
+
+        <div class="conv-field">
+          <label for="hsl-input">HSL</label>
+          <div class="input-with-copy">
+            <input type="text" id="hsl-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="hsl(221, 83%, 53%)" aria-describedby="hsl-error">
+            <button type="button" class="copy-btn" data-copy-target="hsl-input" aria-label="HSLをコピー">コピー</button>
+          </div>
+          <p class="field-error" id="hsl-error" role="alert"></p>
+        </div>
+
+        <div class="conv-field">
+          <label for="rgba-input">RGBA（透明度）</label>
+          <div class="input-with-copy">
+            <input type="text" id="rgba-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="rgba(37, 99, 235, 1)" aria-describedby="rgba-error">
+            <button type="button" class="copy-btn" data-copy-target="rgba-input" aria-label="RGBAをコピー">コピー</button>
+          </div>
+          <p class="field-error" id="rgba-error" role="alert"></p>
+        </div>
+
+        <div class="conv-field">
+          <label for="hsla-input">HSLA（透明度）</label>
+          <div class="input-with-copy">
+            <input type="text" id="hsla-input" inputmode="text" autocomplete="off" spellcheck="false" placeholder="hsla(221, 83%, 53%, 1)" aria-describedby="hsla-error">
+            <button type="button" class="copy-btn" data-copy-target="hsla-input" aria-label="HSLAをコピー">コピー</button>
+          </div>
+          <p class="field-error" id="hsla-error" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="conv-field alpha-field">
+        <label for="alpha-range">透明度（α）: <span id="alpha-value">1.00</span></label>
+        <input type="range" id="alpha-range" min="0" max="1" step="0.01" value="1" aria-describedby="alpha-value">
+      </div>
+
+      <h3>よく使う色</h3>
+      <div id="swatches" class="swatches" role="list" aria-label="よく使う色のサンプル"></div>
+    </div>
+  </section>
+
+  <section class="tool-section" aria-labelledby="contrast-heading">
+    <h2 id="contrast-heading">コントラスト比チェック（WCAG）</h2>
+    <div class="contrast-grid">
+      <div class="conv-field">
+        <label for="fg-color">文字色（前景）</label>
+        <div class="color-input-row">
+          <input type="color" id="fg-color" value="#1a1d23" aria-label="文字色を選択">
+          <input type="text" id="fg-hex" inputmode="text" autocomplete="off" spellcheck="false" value="#1a1d23" aria-label="文字色のHEXコード">
+        </div>
+      </div>
+      <div class="conv-field">
+        <label for="bg-color">背景色</label>
+        <div class="color-input-row">
+          <input type="color" id="bg-color" value="#ffffff" aria-label="背景色を選択">
+          <input type="text" id="bg-hex" inputmode="text" autocomplete="off" spellcheck="false" value="#ffffff" aria-label="背景色のHEXコード">
+        </div>
+      </div>
+    </div>
+
+    <div id="contrast-preview" class="contrast-preview">
+      <p id="contrast-sample-text">背景色の上に文字色でテキストを表示します。Aa あいうえお</p>
+    </div>
+
+    <div class="contrast-result">
+      <p class="contrast-ratio">コントラスト比: <strong id="contrast-ratio-value">21.00</strong> : 1</p>
+      <ul class="wcag-results" id="wcag-results">
+        <li id="wcag-aa-normal">通常文字 AA (4.5:1以上): <span class="badge"></span></li>
+        <li id="wcag-aa-large">大きな文字 AA (3:1以上): <span class="badge"></span></li>
+        <li id="wcag-aaa-normal">通常文字 AAA (7:1以上): <span class="badge"></span></li>
+        <li id="wcag-aaa-large">大きな文字 AAA (4.5:1以上): <span class="badge"></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="tool-section" aria-labelledby="howto-heading">
+    <h2 id="howto-heading">使い方</h2>
+    <ol>
+      <li>HEX・RGB・HSL・RGBA・HSLAのいずれかの欄に色を入力するか、カラーピッカーで色を選ぶと、他のすべての表記が自動的に同期されます。</li>
+      <li>透明度（α）スライダーでRGBA・HSLAの透明度を調整できます。</li>
+      <li>各入力欄の「コピー」ボタンで、その表記をクリップボードにコピーできます。</li>
+      <li>「ランダム色生成」ボタンでランダムな色を生成できます。「よく使う色」からよく使う色をすぐに選べます。</li>
+      <li>「コントラスト比チェック」セクションで文字色・背景色を指定すると、WCAGのAA/AAA基準（通常文字・大きな文字）への適合状況を確認できます。</li>
+    </ol>
+  </section>
+
+  <section class="tool-section" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問（FAQ）</h2>
+    <dl class="faq-list">
+      <dt>Q. 入力した色データはサーバーに送信されますか？</dt>
+      <dd>A. いいえ。本ツールはすべての処理をブラウザ内（端末内）で行い、外部への送信は一切行いません。</dd>
+
+      <dt>Q. コントラスト比はどのような基準で計算していますか？</dt>
+      <dd>A. WCAG 2.1で定義されている相対輝度の計算式に基づき、前景色と背景色のコントラスト比を算出しています。AA（通常文字4.5:1以上、大きな文字3:1以上）、AAA（通常文字7:1以上、大きな文字4.5:1以上）の基準で判定を表示します。</dd>
+
+      <dt>Q. HSLとHSLAの違いは何ですか？</dt>
+      <dd>A. HSLAはHSLに透明度（アルファ値、0〜1）を追加した表記です。透明度スライダーで調整できます。</dd>
+
+      <dt>Q. 入力した値が無効な場合はどうなりますか？</dt>
+      <dd>A. 各入力欄の下にエラーメッセージを表示し、他の欄の値は変更されません。正しい形式（例: #2563eb、rgb(37, 99, 235)、hsl(221, 83%, 53%)）で入力してください。</dd>
+    </dl>
+  </section>
+
+  <!-- アフィリエイト枠 -->
+  <aside class="affiliate-box" aria-labelledby="affiliate-heading">
+    <h2 id="affiliate-heading">おすすめ</h2>
+    <p class="pr-label">[PR]</p>
+    <ul class="affiliate-list" id="affiliate-list">
+      <!-- monetization.js で動的に生成 -->
+    </ul>
+  </aside>
+
+  <!-- Pro案内 -->
+  <section class="pro-box" aria-labelledby="pro-heading">
+    <h2 id="pro-heading">Proプラン</h2>
+    <p>広告非表示・追加機能が使える買い切りプランです。</p>
+    <button id="pro-button" type="button" class="btn btn-primary">Proを購入（準備中）</button>
+  </section>
+
+  <!-- 開発用Proフラグ切替（公開前に削除を検討） -->
+  <section class="tool-section" aria-label="開発用設定">
+    <button id="dev-pro-toggle" type="button" class="btn btn-secondary">Proフラグを切替（開発用）</button>
+  </section>
+
+</main>
+
+<!-- TODO: AdSense 広告枠（コンテンツ下） -->
+<div class="ad-slot ad-slot--bottom" data-ad-position="bottom" aria-hidden="true">
+  <!-- <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <nav aria-label="フッターリンク">
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="terms.html">利用規約</a>
+      <a href="operator.html">運営者情報</a>
+    </nav>
+    <p class="copyright">&copy; 2026 ツール工房</p>
+  </div>
+</footer>
+
+<script src="monetization.js" defer></script>
+<script src="app.js" defer></script>
+<script>
+  // PWA: Service Worker 登録（相対パスなのでサブパス公開でも scope が正しく効く）
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>

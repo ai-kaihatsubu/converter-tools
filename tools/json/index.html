@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>JSON整形・検証ツール｜インデント整形・圧縮・エラー箇所表示｜ツール工房</title>
+<meta name="description" content="JSONテキストを入力するだけで整形（インデント2/4選択）・圧縮（minify）・検証ができる無料ツール。不正なJSONはエラー箇所と理由を分かりやすく表示し、キーのアルファベット順ソートにも対応します。">
+<link rel="canonical" href="https://ai-kaihatsubu.github.io/json-formatter/">
+
+<!-- OGP -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="JSON整形・検証ツール｜インデント整形・圧縮・エラー箇所表示｜ツール工房">
+<meta property="og:description" content="JSONの整形（インデント2/4）・圧縮（minify）・検証ができる無料ツール。不正なJSONはエラー箇所と理由を表示、キーのソートにも対応。">
+<meta property="og:url" content="https://ai-kaihatsubu.github.io/json-formatter/">
+<meta property="og:image" content="https://ai-kaihatsubu.github.io/json-formatter/icons/icon-512.svg">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0071e3">
+<link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "JSON整形・検証ツール",
+  "description": "JSONテキストの整形（インデント2/4選択）・圧縮（minify）・検証ができる無料ツールです。不正なJSONはエラー箇所と理由を表示し、キーのアルファベット順ソートにも対応します。",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">本文へスキップ</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <h1 class="logo">JSON整形・検証ツール</h1>
+    <nav class="header-actions" aria-label="表示設定">
+      <button id="theme-toggle" type="button" aria-label="ダーク/ライトモード切替" aria-pressed="false">
+        <span aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- AdSense 広告枠（コンテンツ上） -->
+<div class="ad-slot ad-slot--top" data-ad-position="top" aria-hidden="true">
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-6568622993777242"
+       data-ad-slot="1016000001"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<main id="main" class="container">
+
+  <section class="tool-section" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">JSON整形・検証</h2>
+    <p class="lead">
+      JSONテキストを貼り付けて、「整形」「圧縮」「検証」のいずれかを実行してください。
+      入力値はこの端末（ブラウザ）内だけで処理され、外部に送信されることはありません。
+    </p>
+
+    <div id="tool-root">
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="json-input">JSON入力</label>
+          <textarea id="json-input" class="json-textarea" rows="10" placeholder='例: {"name":"taro","age":20,"items":[1,2,3]}' spellcheck="false">{"name":"taro","age":20,"active":true,"items":[3,1,2],"address":{"city":"Tokyo","zip":"100-0001"}}</textarea>
+        </div>
+      </div>
+
+      <fieldset class="option-group">
+        <legend class="visually-hidden">整形オプション</legend>
+        <div class="radio-list" role="radiogroup" aria-label="インデント幅">
+          <label><input type="radio" name="indent" id="indent-2" value="2" checked> インデント2</label>
+          <label><input type="radio" name="indent" id="indent-4" value="4"> インデント4</label>
+          <label><input type="checkbox" id="sort-keys"> キーをアルファベット順にソート</label>
+        </div>
+      </fieldset>
+
+      <div class="action-row">
+        <button type="button" id="btn-format" class="btn btn-primary">整形</button>
+        <button type="button" id="btn-minify" class="btn btn-secondary">圧縮（minify）</button>
+        <button type="button" id="btn-validate" class="btn btn-secondary">検証</button>
+        <button type="button" id="btn-clear" class="btn btn-secondary">クリア</button>
+      </div>
+
+      <p id="status-message" class="status-text" role="status" aria-live="polite"></p>
+
+      <div class="result-box" id="result-box" hidden>
+        <div class="result-header">
+          <h3 id="result-heading">結果</h3>
+          <button type="button" id="btn-copy" class="btn btn-secondary">結果をコピー</button>
+        </div>
+        <pre id="json-output" class="json-output" tabindex="0"></pre>
+        <p id="result-meta" class="result-sub"></p>
+      </div>
+
+      <div class="example-box">
+        <strong>使い方の例:</strong>
+        <code>{"b":2,"a":1}</code> を「整形」すると読みやすい複数行表示に、「圧縮」すると
+        <code>{"b":2,"a":1}</code> のような1行表示になります。
+        「キーをアルファベット順にソート」をオンにすると <code>{"a":1,"b":2}</code> の順で出力されます。
+        「検証」では、不正なJSON（例: <code>{"a":1,}</code>）を入力するとエラー内容と位置を表示します。
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 使い方 -->
+  <section class="tool-section" aria-labelledby="howto-heading">
+    <h2 id="howto-heading">使い方</h2>
+    <ol>
+      <li>テキストエリアにJSONを貼り付けます。</li>
+      <li>「整形」を押すと、選択したインデント幅（2または4）で見やすく整形されたJSONが表示されます。「キーをアルファベット順にソート」をオンにすると、各オブジェクトのキーがソートされた状態で出力されます。</li>
+      <li>「圧縮（minify）」を押すと、改行・空白を取り除いた1行のJSONが表示されます。</li>
+      <li>「検証」を押すと、JSONが正しい形式かどうかを判定します。不正な場合は、エラーの種類とおおよその位置（行・列、文字位置）を表示します。</li>
+      <li>結果は「結果をコピー」ボタンでクリップボードにコピーできます。</li>
+    </ol>
+    <p>
+      入力されたJSONは、この端末（ブラウザ）内だけで処理され、外部のサーバーへ送信されることはありません。
+    </p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="tool-section" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+
+    <h3>「整形」と「圧縮」の違いは何ですか？</h3>
+    <p>
+      「整形」は、JSONをインデント（字下げ）付きの複数行に整え、人が読みやすい形にします。
+      「圧縮（minify）」は、改行や余分な空白を取り除き、データサイズを小さくした1行のJSONにします。
+      用途に応じて使い分けてください。
+    </p>
+
+    <h3>不正なJSONを入力するとどうなりますか？</h3>
+    <p>
+      「整形」「圧縮」「検証」のいずれかを押した際にJSONとして解析できない場合、
+      エラーメッセージとともに、エラーが発生したおおよその位置（文字位置・行・列）を表示します。
+      例えば、末尾に余分な「,」（カンマ）がある場合や、引用符の閉じ忘れなどが典型的な原因です。
+    </p>
+
+    <h3>キーの並び順を変えることはできますか？</h3>
+    <p>
+      「キーをアルファベット順にソート」をオンにして「整形」または「圧縮」を実行すると、
+      JSON内のすべてのオブジェクトのキーがアルファベット順（Unicodeコードポイント順）に並び替えられます。
+      配列の順序は変更されません。
+    </p>
+
+    <h3>大きなJSONでも処理できますか？</h3>
+    <p>
+      ブラウザの<code>JSON.parse</code>・<code>JSON.stringify</code>を利用しているため、
+      ブラウザが扱える範囲のサイズであれば処理できます。
+      非常に大きなJSON（数十MB以上）では、処理に時間がかかったり、
+      ブラウザの性能によっては固まる可能性があります。その場合は分割して処理することをおすすめします。
+    </p>
+
+    <h3>入力したJSONは保存・送信されますか？</h3>
+    <p>
+      いいえ。本ツールは入力されたJSONを外部に送信しません。すべての処理はこの端末（ブラウザ）内で行われます。
+      画面表示用の設定（ダーク/ライト表示等）のみ、ブラウザのlocalStorageに保存される場合があります。
+    </p>
+  </section>
+
+  <!-- アフィリエイト枠 -->
+  <aside class="affiliate-box" aria-labelledby="affiliate-heading">
+    <h2 id="affiliate-heading">おすすめ</h2>
+    <p class="pr-label">[PR]</p>
+    <ul class="affiliate-list" id="affiliate-list">
+      <!-- monetization.js で動的に生成 -->
+    </ul>
+  </aside>
+
+  <!-- Pro案内 -->
+  <section class="pro-box" aria-labelledby="pro-heading">
+    <h2 id="pro-heading">Proプラン</h2>
+    <p>
+      買い切り¥480で、広告非表示・履行履歴の保存・差分比較などの機能が利用できる予定です（準備中）。
+    </p>
+    <button id="pro-button" type="button" class="btn btn-primary">Proを購入（準備中）</button>
+    <p class="dev-only">
+      <button id="dev-pro-toggle" type="button" class="btn btn-secondary">Proフラグを切替（開発用）</button>
+    </p>
+  </section>
+
+</main>
+
+<!-- AdSense 広告枠（コンテンツ下） -->
+<div class="ad-slot ad-slot--bottom" data-ad-position="bottom" aria-hidden="true">
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-6568622993777242"
+       data-ad-slot="1016000002"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <p class="ad-placeholder">広告スペース（準備中）</p>
+</div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <nav aria-label="フッターリンク">
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="terms.html">利用規約</a>
+      <a href="operator.html">運営者情報</a>
+    </nav>
+    <p class="copyright">&copy; 2026 ツール工房</p>
+  </div>
+</footer>
+
+<script src="monetization.js" defer></script>
+<script src="app.js" defer></script>
+<script>
+  // PWA: Service Worker 登録（相対パスなのでサブパス公開でも scope が正しく効く）
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>

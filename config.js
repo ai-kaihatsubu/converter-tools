@@ -1,0 +1,1 @@
+window.SUITE_CONFIG = { brand: "変換ツール", desc: "単位変換、カラーコード変換、料理の分量換算、JSON整形をまとめた無料ツール", tabs: [ { label: "単位", path: "./tools/unit/index.html" }, { label: "カラー", path: "./tools/color/index.html" }, { label: "分量", path: "./tools/recipe/index.html" }, { label: "JSON", path: "./tools/json/index.html" } ] };
