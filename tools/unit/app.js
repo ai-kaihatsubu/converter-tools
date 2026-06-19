@@ -2,7 +2,7 @@
    単位変換ツール : app.js
    バニラJS / 外部依存なし
    - ダーク/ライト切替（localStorage保存）
-   - Proフラグ判定（広告非表示などの分岐の起点）
+   - お布施フラグ判定（分岐の起点）
    - カテゴリ（長さ・重さ・温度・面積・体積・速度・データ容量・時間）の単位変換
    - 入力値・選択単位はlocalStorageに保存（個人情報を含まない設定値のみ）
    ============================================ */
@@ -11,7 +11,7 @@
   "use strict";
 
   const STORAGE_KEY_THEME = "tf_theme"; // "light" | "dark"
-  const STORAGE_KEY_PRO = "tf_pro";     // "1" で Pro 有効（擬似フラグ）
+  const STORAGE_KEY_PRO = "tf_pro";     // "1" でお布施済みフラグ（擬似）
   const STORAGE_KEY_STATE = "unitconv_state"; // カテゴリ・値・単位の選択状態のみ保存
 
   /* ---------- テーマ切替 ---------- */
@@ -50,7 +50,7 @@
     }
   }
 
-  /* ---------- Pro判定（広告非表示など） ---------- */
+  /* ---------- お布施フラグ判定 ---------- */
   function isPro() {
     return localStorage.getItem(STORAGE_KEY_PRO) === "1";
   }
